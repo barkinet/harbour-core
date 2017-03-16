@@ -17,16 +17,16 @@ matrix:
       sudo: required
       compiler: i686-w64-mingw32-gcc
       services: [ docker ]
-      env: [ HB_CI_THREADS=4, 'DOCKER_IMAGE=ubuntu:yakkety' ]
+      env: [ HB_CI_THREADS=4, 'DOCKER_IMAGE=ubuntu:latest' ]
 
 before_install:
-  - echo ">>$DOCKER_IMAGE<<";
-    mxe_pkgs=(
+  - mxe_pkgs=(
       mxe-{i686,x86-64}-w64-mingw32.shared-{cairo,file,ghostscript,icu4c,libmysqlclient,postgresql}
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd});
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       docker pull "${DOCKER_IMAGE}";
       time docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "
+        lsb_release -a;
         apt-get -qq update;
         apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full curl dos2unix realpath wine-stable;
         echo 'deb http://pkg.mxe.cc/repos/apt/debian wheezy main' > /etc/apt/sources.list.d/mxeapt.list;
@@ -40,5 +40,6 @@ before_install:
 
 script:
   - if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" ./package/mpkg_win_ci.sh;
+      echo '>>${DOCKER_IMAGE}<<';
+      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c ./package/mpkg_win_ci.sh;
     fi;
