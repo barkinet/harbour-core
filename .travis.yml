@@ -25,15 +25,12 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd});
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       DOCKER_IMAGE='ubuntu:yakkety';
-      docker pull "${DOCKER_IMAGE}";
-      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "
-        apt-get -qq update;
-        apt-get -qq install dirmngr;
-        echo 'deb http://pkg.mxe.cc/repos/apt/debian wheezy main' | tee /etc/apt/sources.list.d/mxeapt.list > /dev/null;
-        apt-key adv --keyserver hkps://keyserver.ubuntu.com --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB;
+      time docker pull "${DOCKER_IMAGE}";
+      time docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "
         apt-get -qq update;
         apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full dos2unix realpath
-          wine-stable ${mxe_pkgs[@]}";
+          wine-stable;
+        ./package/mpkg_win_dl_mxe.sh ${mxe_pkgs[@]}";
     fi;
 
 script:
