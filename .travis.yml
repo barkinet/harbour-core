@@ -27,10 +27,11 @@ before_install:
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       docker pull "${DOCKER_IMAGE}";
       time docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "
-        printenv | grep TRAVIS;
         cat /etc/*-release;
         apt-get -qq update;
-        apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full curl dos2unix realpath wine-stable;
+        apt-get -qq install
+          curl dirmngr gcc-6
+          binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full dos2unix realpath wine-stable;
         echo 'deb http://pkg.mxe.cc/repos/apt/debian wheezy main' > /etc/apt/sources.list.d/mxeapt.list;
         curl -fsS --connect-timeout 15 --retry 3 'https://keyserver.ubuntu.com/pks/lookup?search=0xD43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB&op=get'
         | gpg --import --status-fd 1;
@@ -42,5 +43,7 @@ before_install:
 
 script:
   - if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "./package/mpkg_win_ci.sh --force";
+      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" -e HB_CI_THREADS sh -c "
+        printenv | grep HB_CI_;
+        ./package/mpkg_win_ci.sh --force";
     fi;
