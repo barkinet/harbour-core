@@ -10,106 +10,32 @@ git:
   depth: 10
 language: c
 
-addons:
-  apt:
-    packages: &hb-linux-common
-      - firebird2.5-dev
-    # - libcairo2-dev
-      - libcups2-dev
-      - libcurl4-openssl-dev
-      - libfreeimage-dev
-      - libgd2-xpm-dev
-      - libgpm-dev
-    # - libgs-dev
-      - libicu-dev
-      - libmagic-dev
-      - libmysqlclient-dev
-      - libncurses5-dev
-      - libpq-dev
-    # - libslang2-dev
-      - unixodbc-dev
-
 matrix:
   include:
     - os: linux
       dist: trusty
-      sudo: false
-      compiler: clang
-      env: [ HB_CI_THREADS=4, HB_CCSUFFIX=-4.0 ]
-      addons:
-        apt:
-          packages: [ *hb-linux-common, clang-4.0 ]
-          sources: llvm-toolchain-trusty-4.0
-    - os: linux
-      dist: trusty
-      sudo: false
-      compiler: gcc
-      env: [ HB_CI_THREADS=4, HB_CCSUFFIX=-6 ]
-      addons:
-        apt:
-          packages: [ *hb-linux-common, gcc-6, g++-6 ]
-          sources: ubuntu-toolchain-r-test
-    - os: linux
-      dist: trusty
       sudo: required
       compiler: i686-w64-mingw32-gcc
+      services: [ docker ]
       env: HB_CI_THREADS=4
       addons:
         apt:
           packages:
             - [ binutils-mingw-w64, gcc-mingw-w64, g++-mingw-w64, p7zip-full, gnupg-curl, dos2unix, realpath ]
-    - os: osx
-      osx_image: xcode8.2
-      compiler: clang
-      env: HB_CI_THREADS=4
-    - os: osx
-      osx_image: xcode8.2
-      compiler: i686-w64-mingw32-gcc
-      env: HB_CI_THREADS=4
 
 before_install:
   - mxe_pkgs=(
       mxe-{i686,x86-64}-w64-mingw32.shared-{cairo,file,ghostscript,icu4c,libmysqlclient,postgresql}
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd});
-    if [ "$TRAVIS_OS_NAME" = 'osx' ]; then
-      if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-        time brew install p7zip mingw-w64 jq osslsigncode dos2unix gpg coreutils || true;
-        time brew install --force-bottle --build-bottle wine || true;
-        export MXE_DONT_INSTALL=gcc;
-        time ./package/mpkg_win_dl_mxe.sh "${mxe_pkgs[@]}";
-      else
-        brew install cairo curl freeimage gd ghostscript icu4c libmagic mariadb openssl@1.1 qt5 s-lang unixodbc;
-      fi;
-      export MACOSX_DEPLOYMENT_TARGET=10.10;
-    elif [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
-      echo 'deb http://pkg.mxe.cc/repos/apt/debian wheezy main' | sudo tee /etc/apt/sources.list.d/mxeapt.list > /dev/null;
-      sudo apt-key adv --keyserver hkps://keyserver.ubuntu.com --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB;
-      sudo dpkg --add-architecture i386;
-      sudo apt-get -qq update;
-      sudo apt-get -qq install wine "${mxe_pkgs[@]}";
+    if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
+      docker pull ubuntu:xenial;
+      docker run ubuntu:xenial apt-get -qq update;
+      docker run ubuntu:xenial apt-get -qq install wine;
+      docker run ubuntu:xenial sh ls -lA;
+      docker run ubuntu:xenial ./package/mxe_win_dl_mxe.sh "${mxe_pkgs[@]}";
     fi;
 
 script:
   - if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      if ./package/mpkg_win_ci.sh && [ "${TRAVIS_BRANCH#*prod*}" = "${TRAVIS_BRANCH}" ] ; then
-        mv -f harbour-snapshot-win.7z "harbour-snapshot-win-built-on-${TRAVIS_OS_NAME}.7z";
-      fi;
-    else
-      ls -lA "$(dirname "$(which "${CC}${HB_CCSUFFIX}")")/${CC}"*;
-      "${CC}${HB_CCSUFFIX}" -v;
-      HB_COMPILER=$CC make -j "${HB_CI_THREADS}";
+      docker run ubuntu:xenial ./package/mpkg_win_ci.sh
     fi;
-
-deploy:
-  skip_cleanup: true
-  provider: releases
-  api_key: ${GITHUB_TOKEN}
-  file: harbour-snapshot-win-built-on-${TRAVIS_OS_NAME}.7z
-  file_glob: false
-  tag_name: v3.4.0dev
-  draft: false
-  prerelease: true
-  overwrite: true
-  on:
-    branch: master
-    condition: "$CC = i686-w64-mingw32-gcc"
