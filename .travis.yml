@@ -27,12 +27,11 @@ before_install:
       image='ubuntu:yakkety';
       docker pull "${image}";
       docker run  -v "${PWD}:${PWD}" -w "${PWD}" -t "${image}" sh -c "
-        pwd &&
-        ls -lA &&
+        echo 'deb http://pkg.mxe.cc/repos/apt/debian wheezy main' | sudo tee /etc/apt/sources.list.d/mxeapt.list > /dev/null;
+        sudo apt-key adv --keyserver hkps://keyserver.ubuntu.com --recv-keys D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB;
         apt-get -qq update &&
         apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full dos2unix realpath
-          wine-stable &&
-        ./package/mxe_win_dl_mxe.sh mxe-x86-64-w64-mingw32.shared";
+          wine-stable "${mxe_pkgs[@]}"";
     fi;
 
 script:
