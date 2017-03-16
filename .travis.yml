@@ -18,10 +18,6 @@ matrix:
       compiler: i686-w64-mingw32-gcc
       services: [ docker ]
       env: HB_CI_THREADS=4
-      addons:
-        apt:
-          packages:
-            - [ binutils-mingw-w64, gcc-mingw-w64, g++-mingw-w64, p7zip-full, gnupg-curl, dos2unix, realpath ]
 
 before_install:
   - mxe_pkgs=(
