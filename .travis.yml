@@ -27,7 +27,8 @@ before_install:
       docker pull ubuntu:yakkety;
       docker run -v${PWD}:/w -t ubuntu:yakkety sh -c "
         apt-get -qq update &&
-        apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full gnupg-curl dos2unix realpath wine &&
+        apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full gnupg-curl dos2unix realpath
+          wine-stable &&
         /w/package/mxe_win_dl_mxe.sh ${mxe_pkgs[@]}";
     fi;
 
