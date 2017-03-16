@@ -25,11 +25,11 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd});
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       docker pull ubuntu:yakkety;
-      docker run -v${PWD}:/w -t ubuntu:yakkety sh -c "
+      docker run  -v "${PWD}:${PWD}" -w "{$PWD}" -t ubuntu:yakkety sh -c "
         apt-get -qq update &&
         apt-get -qq install binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full dos2unix realpath
           wine-stable &&
-        /w/package/mxe_win_dl_mxe.sh ${mxe_pkgs[@]}";
+        /w/package/mxe_win_dl_mxe.sh mxe-x86-64-w64-mingw32.shared";
     fi;
 
 script:
