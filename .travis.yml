@@ -42,5 +42,5 @@ before_install:
 script:
   - if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
       echo ">>${DOCKER_IMAGE}<<";
-      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "printenv | grep TRAVIS; ./package/mpkg_win_ci.sh";
+      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "printenv | grep TRAVIS; ./package/mpkg_win_ci.sh --force";
     fi;
