@@ -27,7 +27,7 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd})
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       time docker pull "${DOCKER_IMAGE}"
-      time docker run -t -d -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c "
+      time docker run -it -d -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c "
         apt-get -qq update
         apt-get -qq install \
           curl dirmngr git gcc-6 \
@@ -46,7 +46,11 @@ script:
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
       docker ps -a
       echo ">$(cat linux.cid)<"
-      docker exec -t "$(cat linux.cid)" sh -c "
+      time docker wait "$(cat linux.cid)"
+      docker ps -a
+      docker start "$(cat linux.cid)"
+      docker ps -a
+      docker exec -it "$(cat linux.cid)" sh -c "
         cat /etc/*-release
         ./package/mpkg_win_ci.sh --force"
     fi
