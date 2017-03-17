@@ -34,6 +34,7 @@ before_install:
         ulimit -a
         df -h
         apt-get -qq update
+        dpkg --add-architecture i386
         apt-get -qq install \
           curl dirmngr git make gcc binutils \
           binutils-mingw-w64 gcc-mingw-w64 g++-mingw-w64 p7zip-full dos2unix realpath wine-stable
@@ -43,6 +44,7 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
+        apt-get -qq install ${mxe_pkgs[@]}
         sh -x ./package/mpkg_win_ci.sh --force"
     fi
 
