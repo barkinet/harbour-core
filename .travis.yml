@@ -26,7 +26,8 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.shared-{cairo,file,ghostscript,icu4c,libmysqlclient,postgresql} \
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd})
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
-      time docker run -t -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c "
+      time docker pull "${DOCKER_IMAGE}"
+      time docker run -t -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" --cidfile linux.cid sh -c "
         apt-get -qq update
         apt-get -qq install \
           curl dirmngr git gcc-6 \
@@ -37,15 +38,15 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
-        apt-get -qq install ${mxe_pkgs[@]}" > _docker.fil
+        apt-get -qq install ${mxe_pkgs[@]}"
     fi
 
 script:
   - >
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
       docker ps -a
-      echo ">$(cat _docker.fil)<"
-      docker exec -t "$(cat _docker.fil)" sh -c "
+      echo ">$(cat linux.cid)<"
+      docker exec -t "$(cat linux.cid)" sh -c "
         cat /etc/*-release
         ./package/mpkg_win_ci.sh --force"
     fi
