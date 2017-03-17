@@ -29,6 +29,10 @@ before_install:
       time docker pull "${DOCKER_IMAGE}"
       time docker run -it -v "${PWD}:${PWD}" -w "${PWD}" --cidfile linux.cid "${DOCKER_IMAGE}" sh -c "
         cat /etc/*-release
+        ulimit -a
+        ulimit -s 1082768
+        ulimit -a
+        df -h
         apt-get -qq update
         apt-get -qq install \
           curl dirmngr git gcc-6 binutils \
@@ -47,10 +51,7 @@ script:
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
       time docker start "$(cat linux.cid)"
       time docker exec -t "$(cat linux.cid)" sh -c "
-        ulimit -a
-        df -h
         export CI=true
         sh -x ./package/mpkg_win_ci.sh
         echo $?"
-      docker logs "$(cat linux.cid)"
     fi
