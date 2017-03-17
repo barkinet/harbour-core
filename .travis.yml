@@ -26,7 +26,7 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd});
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       docker pull "${DOCKER_IMAGE}";
-      time docker run -t -v "${PWD}:${PWD}" -w "${PWD}" -"${DOCKER_IMAGE}" sh -c "
+      time docker run -t -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c "
         cat /etc/*-release;
         apt-get -qq update;
         apt-get -qq install
