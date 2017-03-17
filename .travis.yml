@@ -45,8 +45,10 @@ before_install:
 script:
   - >
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      time docker start "$(cat linux.cid)"
-      time docker exec -t "$(cat linux.cid)" sh -c "
+      time -v docker start "$(cat linux.cid)"
+      time -v docker exec -t "$(cat linux.cid)" sh -c "
+        ulimit -a
+        df -h
         export CI=true
         sh -x ./package/mpkg_win_ci.sh
         echo $?"
