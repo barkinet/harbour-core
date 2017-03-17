@@ -21,7 +21,7 @@ _BRANCH="${APPVEYOR_REPO_BRANCH}${TRAVIS_BRANCH}${CI_BUILD_REF_NAME}${GIT_BRANCH
 [ -n "${_BRANCH}" ] || _BRANCH='master'
 _BRANC4="$(echo "${_BRANCH}" | cut -c -4)"
 
-#[ -n "${HB_CI_THREADS}" ] || HB_CI_THREADS=4
+[ -n "${HB_CI_THREADS}" ] || HB_CI_THREADS=1
 
 _ROOT="$(realpath '.')"
 
