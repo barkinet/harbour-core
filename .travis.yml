@@ -27,7 +27,7 @@ before_install:
       mxe-{i686,x86-64}-w64-mingw32.static-{freeimage,gd})
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       time docker pull "${DOCKER_IMAGE}"
-      time docker run -it -d -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c "
+      time docker run -it -v "${PWD}:${PWD}" -w "${PWD}" --cidfile linux.cid "${DOCKER_IMAGE}" sh -c "
         apt-get -qq update
         apt-get -qq install \
           curl dirmngr git gcc-6 \
@@ -38,7 +38,7 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
-        apt-get -qq install ${mxe_pkgs[@]}" > linux.cid
+        apt-get -qq install ${mxe_pkgs[@]}"
     fi
 
 script:
