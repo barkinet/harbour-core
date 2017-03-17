@@ -43,6 +43,7 @@ before_install:
 script:
   - >
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
+      docker ps -a
       echo ">$(cat _docker.fil)<"
       docker exec -t "$(cat _docker.fil)" sh -c "
         cat /etc/*-release
