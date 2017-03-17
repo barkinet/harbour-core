@@ -43,15 +43,8 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
-        apt-get -qq install ${mxe_pkgs[@]}"
-    fi
-
-script:
-  - >
-    if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      time docker start "$(cat linux.cid)"
-      time docker exec -t "$(cat linux.cid)" sh -c "
+        apt-get -qq install ${mxe_pkgs[@]}
         export CI=true
-        sh -x ./package/mpkg_win_ci.sh
+        ./package/mpkg_win_ci.sh
         echo $?"
     fi
