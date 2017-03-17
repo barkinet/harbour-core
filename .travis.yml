@@ -43,14 +43,7 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
-        apt-get -qq install ${mxe_pkgs[@]}
-        echo 'TRACE1'
-        export CI=true
-        echo 'TRACE2'
         sh -x ./package/mpkg_win_ci.sh
-        echo 'TRACE3'
-        echo $?
-        echo 'TRACE4'"
     fi
 
 script:
