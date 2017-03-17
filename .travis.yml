@@ -44,7 +44,7 @@ before_install:
         gpg --export D43A795B73B16ABE9643FE1AFD8FFF16DB45C6AB \
         | apt-key add -
         apt-get -qq update
-        apt-get -qq install ${mxe_pkgs[@]}
+        apt-get -qq install '${mxe_pkgs[@]}'
         sh -x ./package/mpkg_win_ci.sh --force"
     fi
 
