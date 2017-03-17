@@ -44,7 +44,14 @@ before_install:
         | apt-key add -
         apt-get -qq update
         apt-get -qq install ${mxe_pkgs[@]}
+        echo 'TRACE1'
         export CI=true
-        ./package/mpkg_win_ci.sh
-        echo $?"
+        echo 'TRACE2'
+        sh -x ./package/mpkg_win_ci.sh
+        echo 'TRACE3'
+        echo $?
+        echo 'TRACE4'"
     fi
+
+script:
+  - echo 'NOOP'
