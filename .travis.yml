@@ -43,7 +43,6 @@ before_install:
 
 script:
   - if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" -e HB_CI_THREADS sh -c "
-        printenv | grep HB_CI_;
+      docker run -v "${PWD}:${PWD}" -w "${PWD}" -t "${DOCKER_IMAGE}" sh -c "
         ./package/mpkg_win_ci.sh --force";
     fi;
