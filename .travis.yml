@@ -28,6 +28,7 @@ before_install:
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       time docker pull "${DOCKER_IMAGE}"
       time docker run -it -v "${PWD}:${PWD}" -w "${PWD}" --cidfile linux.cid "${DOCKER_IMAGE}" sh -c "
+        cat /etc/*-release
         apt-get -qq update
         apt-get -qq install \
           curl dirmngr git gcc-6 \
@@ -44,13 +45,9 @@ before_install:
 script:
   - >
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
-      docker ps -a
-      echo ">$(cat linux.cid)<"
-      time docker wait "$(cat linux.cid)"
-      docker ps -a
       docker start "$(cat linux.cid)"
-      docker ps -a
       docker exec -it "$(cat linux.cid)" sh -c "
-        cat /etc/*-release
-        ./package/mpkg_win_ci.sh --force"
+        export CI=true
+        export HB_CCSUFFIX=-6
+        ./package/mpkg_win_ci.sh"
     fi
