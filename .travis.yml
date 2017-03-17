@@ -48,5 +48,6 @@ script:
       docker start "$(cat linux.cid)"
       docker exec -t "$(cat linux.cid)" sh -c "
         export CI=true
-        ./package/mpkg_win_ci.sh"
+        sh -x ./package/mpkg_win_ci.sh
+        echo $?"
     fi
