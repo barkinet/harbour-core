@@ -46,8 +46,8 @@ script:
   - >
     if [ "$CC" = 'i686-w64-mingw32-gcc' ]; then
       docker start "$(cat linux.cid)"
-      docker exec -it "$(cat linux.cid)" sh -c "
+      docker exec -t "$(cat linux.cid)" sh -c "
         export CI=true
-        export HB_CCSUFFIX=-6
         ./package/mpkg_win_ci.sh"
+      docker info
     fi
