@@ -52,4 +52,5 @@ script:
         export CI=true
         sh -x ./package/mpkg_win_ci.sh
         echo $?"
+      docker logs "$(cat linux.cid)"
     fi
