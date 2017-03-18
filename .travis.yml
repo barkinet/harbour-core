@@ -24,5 +24,7 @@ script:
   - >
     if [ "$TRAVIS_OS_NAME" = 'linux' ] && [ "$CC" = 'i686-w64-mingw32-gcc' ] && [ "$TRAVIS_SUDO" = 'true' ]; then
       time docker pull "${DOCKER_IMAGE}"
-      time docker run -it -v "${PWD}:${PWD}" -w "${PWD}" "${DOCKER_IMAGE}" sh -c ./.travis.sh
+      time docker run -it -v "${PWD}:${PWD}" -w "${PWD}" --env-file <(env | grep -E '^(TRAVIS_|HB_)') \
+        "${DOCKER_IMAGE}" \
+        sh -c ./.travis.sh
     fi
